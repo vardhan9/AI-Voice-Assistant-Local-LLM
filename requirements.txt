@@ -3,3 +3,6 @@ langchain
 langchain-community
 gTTS
 pyttsx3
+pygame
+SpeechRecognition
+standard-aifc

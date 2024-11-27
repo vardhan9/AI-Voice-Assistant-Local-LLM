@@ -7,6 +7,6 @@ services:
     ports:
       - 11434:11434
   streamlit-app:
-    image: rajamarthala/ollama-Finnish:3B
+    image: rajamarthala/ai-assitant-finnish:3b
     ports:
       - 8501:8501
