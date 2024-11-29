@@ -58,6 +58,14 @@ def process_prompt(prompt):
     speak_text(response)  # Speak the response
     return response
 
+# Save conversation to file
+def save_conversation(messages, filename="conversation_log.txt"):
+    with open(filename, "w") as file:
+        for message in messages:
+            role = "User" if message["role"] == "user" else "Assistant"
+            file.write(f"{role}: {message['content']}\n")
+        file.write("\n")
+
 # Streamlit UI
 def handle_interface():
     if "messages" not in st.session_state:
@@ -83,9 +91,10 @@ def handle_interface():
             st.session_state.messages.append({"role": "assistant", "content": response})
 
     # Display conversation history
-    for message in st.session_state.messages:
+    for message in reversed(st.session_state.messages):
         with st.chat_message(message["role"]):
             st.write(message["content"])
+    save_conversation(st.session_state.messages)
 
 # Main function
 def main():
