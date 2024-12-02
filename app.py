@@ -7,9 +7,10 @@ from gtts import gTTS
 from langchain_community.llms import Ollama
 from audio_recorder_streamlit import audio_recorder
 import speech_recognition as sr
-
+import base64
 # Initialize Ollama model
-llm = Ollama(model="llama3.2:1b", base_url="http://127.0.0.1:11434", verbose=True)
+llm = Ollama(model="llama3.2:1b", base_url="http://ollama-container:11434", verbose=True)
+audio_placeholder = st.empty()
 
 # Speak text using gTTS and pygame
 def speak_text(text, lang="fi"):
@@ -19,16 +20,17 @@ def speak_text(text, lang="fi"):
         tts = gTTS(text=text, lang=lang)
         tts.save(temp_file)
 
-        # Play audio using pygame
-        pygame.mixer.init()
-        pygame.mixer.music.load(temp_file)
-        pygame.mixer.music.play()
-
-        # Wait for the audio to finish
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
+        # Play audio using Streamlit's st.audio
+        audio_placeholder.markdown(
+            f"""
+            <audio autoplay>
+                <source src="data:audio/mp3;base64,{base64.b64encode(open(temp_file, "rb").read()).decode()}" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+            """,
+            unsafe_allow_html=True,
+        )
     finally:
-        pygame.mixer.quit()
         cleanup_file(temp_file)
 
 # Cleanup temporary files
