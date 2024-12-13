@@ -9,7 +9,7 @@ from audio_recorder_streamlit import audio_recorder
 import speech_recognition as sr
 import base64
 # Initialize Ollama model
-llm = Ollama(model="llama3.2:1b", base_url="http://ollama-container:11434", verbose=True)
+llm = Ollama(model="llama3.2:1b", base_url="http://127.0.0.1:11434", verbose=True)
 audio_placeholder = st.empty()
 
 # Speak text using gTTS and pygame
