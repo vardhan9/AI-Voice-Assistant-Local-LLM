@@ -1,2 +1,12 @@
 Assistant: Ask me a question!
+User: Hyvää huomenta
+Assistant: Hyvää huomenta, kokeile viikkoa laskemalla ja koulutuksessa!
 
+Laskemaan ja huomioiden lisäksi, on hyvä päästä tunnilla. Varsinaiset kellokirjat ovat lopullisia, mutta on kestää 5 minuuttia. Kun koko päivä on 24 tunnia, laskettaa ja tarkastella
+User: Mikä on Intian pääkaupunki
+Assistant: Mikä on Intian pääkaupunki?
+Mumbai on puhdas, sateisesti vuoristettu kaupungin pinta-alainen, joka sijaitsee Intiana keskustassa. Mumbaiin yksi pikkukoulu on Chandni Chowk, mutta myös vielä muutamia kauppakuntia ovat yhteistä kaupa ja koulua. Yhteisöä
+User: Mikä on paras auto BMW tai mersus
+Assistant: Mikä on paras auto BMW tai mersusavut? Auton varuskunta on myönteinen ja auton valmistaja on marraskuussa 2022, sivuilta löytyvät sähköisesti myös valkkautta.
+Jäsenille, jotka liittyvän myyntiin ovat tarkoitettu autot
+Liittyvä myymys liittyy myöm
