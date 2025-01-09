@@ -1,12 +1,6 @@
 Assistant: Ask me a question!
-User: Hyvää huomenta
-Assistant: Hyvää huomenta, kokeile viikkoa laskemalla ja koulutuksessa!
+User: what is capital of Finland
+Assistant: what is capital of Finland
+Helsinki, Finland's capital city. Helsinki is the largest city in Finland, and it is known for its modern architecture, cultural attractions, natural beauty, as well as its vibrant social scene. It is also the hub of the country's business and financial sector.
 
-Laskemaan ja huomioiden lisäksi, on hyvä päästä tunnilla. Varsinaiset kellokirjat ovat lopullisia, mutta on kestää 5 minuuttia. Kun koko päivä on 24 tunnia, laskettaa ja tarkastella
-User: Mikä on Intian pääkaupunki
-Assistant: Mikä on Intian pääkaupunki?
-Mumbai on puhdas, sateisesti vuoristettu kaupungin pinta-alainen, joka sijaitsee Intiana keskustassa. Mumbaiin yksi pikkukoulu on Chandni Chowk, mutta myös vielä muutamia kauppakuntia ovat yhteistä kaupa ja koulua. Yhteisöä
-User: Mikä on paras auto BMW tai mersus
-Assistant: Mikä on paras auto BMW tai mersusavut? Auton varuskunta on myönteinen ja auton valmistaja on marraskuussa 2022, sivuilta löytyvät sähköisesti myös valkkautta.
-Jäsenille, jotka liittyvän myyntiin ovat tarkoitettu autot
-Liittyvä myymys liittyy myöm
+H Helsinki's population is approximately 648,000 people, making it one of Europe's most populous cities. The city is home to the Senate Square, Helsinki Cathedral, Uspenski Cathedral (

@@ -1,11 +1,13 @@
 import os
 import base64
+import subprocess
+import platform
+import io
+import tempfile
 import streamlit as st
-from gtts import gTTS
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from audio_recorder_streamlit import audio_recorder
 import speech_recognition as sr
-import pyttsx3
 
 # Initialize the model and tokenizer
 MODEL_PATH = "data/transformer_models/llama-3.2-3B"
@@ -17,27 +19,63 @@ if not model.config.tie_word_embeddings:
 # Audio placeholder for playback
 audio_placeholder = st.empty()
 
-# Generate and play speech using gTTS
-def speak_text(text, lang="fi"):
-    temp_file = "temp_speech.mp3"
-    try:
-        tts = gTTS(text=text, lang=lang)
-        tts.save(temp_file)
+class PiperTTSClient:
+    def __init__(self, verbose=False):
+        """Initialize the Piper TTS client."""
+        self.verbose = verbose
 
-        # Streamlit audio playback
-        with open(temp_file, "rb") as f:
-            audio_data = base64.b64encode(f.read()).decode()
-        audio_placeholder.markdown(
-            f"""
-            <audio autoplay>
-                <source src="data:audio/mp3;base64,{audio_data}" type="audio/mp3">
-                Your browser does not support the audio element.
-            </audio>
-            """,
-            unsafe_allow_html=True,
-        )
-    finally:
-        cleanup_file(temp_file)
+    def speak_text_with_piper(self, text_to_speak, voice_folder="piper_tts/voices/default_female_voice"):
+        # Determine the Piper binary
+        operating_system = platform.system()
+        piper_binary = os.path.join("piper_tts", "piper.exe" if operating_system == "Windows" else "piper")
+
+        # Check Piper binary existence
+        if not os.path.exists(piper_binary):
+            print(f"Piper binary not found at '{piper_binary}'.")
+            return None
+
+        # Construct the voice path and check existence
+        voice_path = os.path.abspath(voice_folder)
+        if not os.path.exists(voice_path):
+            print(f"Voice folder '{voice_folder}' does not exist.")
+            return None
+
+        # Locate model and JSON files
+        files = os.listdir(voice_path)
+        model_path = next((os.path.join(voice_path, f) for f in files if f.endswith('.onnx')), None)
+        json_path = next((os.path.join(voice_path, f) for f in files if f.endswith('.json')), None)
+
+        if not model_path or not json_path:
+            print("Required voice files not found.")
+            return None
+
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
+                temp_output_path = temp_file.name
+
+            # Construct the Piper command
+            command = [
+                piper_binary,
+                "-m", model_path,
+                "-c", json_path,
+                "-o", temp_output_path,
+            ]
+            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            process.communicate(text_to_speak.encode("utf-8"))
+            process.wait()
+
+            # Read audio data into memory
+            with open(temp_output_path, "rb") as f:
+                audio_data = f.read()
+
+            # Clean up the temporary file
+            os.remove(temp_output_path)
+
+            return audio_data
+        except Exception as e:
+            print(f"Error running Piper TTS: {e}")
+            return None
+
 
 # Delete temporary files
 def cleanup_file(file_path):
@@ -54,8 +92,8 @@ def recognize_speech(audio_file=None):
         try:
             with sr.AudioFile(audio_file) as source:
                 audio = r.record(source)
-                st.write('Detected speech:',r.recognize_google(audio, language='fi-FI'))
-            return r.recognize_google(audio, language="fi-FI")
+                st.write('Detected speech:',r.recognize_google(audio))
+            return r.recognize_google(audio)
         except Exception as e:
             st.error(f"Error recognizing speech: {e}")
     return None
@@ -70,7 +108,7 @@ def process_prompt(prompt):
         max_length=512
     )
 
-    # Set the `pad_token_id` explicitly if it's missing
+    # Set the pad_token_id explicitly if it's missing
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
@@ -116,19 +154,28 @@ def handle_interface():
 
     # Combine prompts from text and audio
     prompt = text_prompt or audio_prompt
+    tts_client = PiperTTSClient(verbose=True)
 
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.spinner("Thinking..."):
             response = process_prompt(prompt)
             st.session_state.messages.append({"role": "assistant", "content": response})
-            speak_text(response)
+
+            # Generate TTS audio and play it directly in Streamlit
+            audio_data = tts_client.speak_text_with_piper(response)
+            if audio_data:
+                audio_placeholder.audio(audio_data, format="audio/wav")
+            else:
+                st.error("Failed to generate audio.")
 
     # Display conversation history
     for message in reversed(st.session_state.messages):
         with st.chat_message(message["role"]):
             st.write(message["content"])
+
     save_conversation(st.session_state.messages)
+
 
 # Main function
 def main():
