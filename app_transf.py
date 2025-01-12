@@ -59,7 +59,7 @@ def cleanup_wav_files_in_current_directory():
     except Exception as e:
         print(f"Error cleaning up .wav files: {e}")
 
-def speak_text_with_piper(text_to_speak, voice_folder="piper_tts/voices/default_female_voice"):
+def speak_text_with_piper(text_to_speak, voice_folder="piper_tts/voices/finnish"):
     """Generate speech from text using Piper TTS."""
     # Determine the Piper binary
     operating_system = platform.system()
@@ -122,7 +122,7 @@ def recognize_speech_whisper(audio_file=None, model_size="base"):
             model = whisper.load_model(model_size)
             
             # Perform transcription with Finnish language detection
-            result = model.transcribe(audio_file)
+            result = model.transcribe(audio_file, language="fi")
             
             # Print and return the detected speech
             detected_speech = result["text"]
@@ -152,10 +152,10 @@ def process_prompt(prompt):
 
     outputs = model.generate(
         inputs["input_ids"],
-        max_length=500,
+        max_length=100,
         num_return_sequences=1,
         no_repeat_ngram_size=2,
-        temperature=0.2,
+        temperature=0.5,
         top_k=50,
         top_p=0.95,
         do_sample=True,
