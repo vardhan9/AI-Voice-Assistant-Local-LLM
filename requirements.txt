@@ -7,3 +7,4 @@ pygame
 SpeechRecognition
 standard-aifc
 audio_recorder_streamlit
+piper
