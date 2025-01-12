@@ -3,6 +3,7 @@ import base64
 import subprocess
 import platform
 import tempfile
+import whisper
 import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from audio_recorder_streamlit import audio_recorder
@@ -114,17 +115,26 @@ def speak_text_with_piper(text_to_speak, voice_folder="piper_tts/voices/default_
 
 
 # Recognize speech from an audio file
-def recognize_speech(audio_file=None):
-    r = sr.Recognizer()
+def recognize_speech_whisper(audio_file=None, model_size="base"):
     if audio_file:
         try:
-            with sr.AudioFile(audio_file) as source:
-                audio = r.record(source)
-                st.write('Detected speech:', r.recognize_google(audio))
-            return r.recognize_google(audio)
+            # Load the specified Whisper model
+            model = whisper.load_model(model_size)
+            
+            # Perform transcription with Finnish language detection
+            result = model.transcribe(audio_file)
+            
+            # Print and return the detected speech
+            detected_speech = result["text"]
+            print(f"Detected speech: {detected_speech}")
+            return detected_speech
         except Exception as e:
-            st.error(f"Error recognizing speech: {e}")
-    return None
+            print(f"Error recognizing speech: {e}")
+            return None
+    else:
+        print("No audio file provided.")
+        return None
+
 
 # Generate a response using the model
 def process_prompt(prompt):
@@ -142,10 +152,10 @@ def process_prompt(prompt):
 
     outputs = model.generate(
         inputs["input_ids"],
-        max_length=100,
+        max_length=500,
         num_return_sequences=1,
         no_repeat_ngram_size=2,
-        temperature=0.7,
+        temperature=0.2,
         top_k=50,
         top_p=0.95,
         do_sample=True,
@@ -176,7 +186,7 @@ def handle_interface():
         if audio_file:
             with open("temp_audio.wav", "wb") as f:
                 f.write(audio_file)
-            audio_prompt = recognize_speech("temp_audio.wav")
+            audio_prompt = recognize_speech_whisper("temp_audio.wav")
            
 
     # Add a text input for entering the prompt
