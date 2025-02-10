@@ -1,11 +1,9 @@
 streamlit
 langchain
 langchain-community
-gTTS
-pyttsx3
-pygame
 SpeechRecognition
 standard-aifc
 audio_recorder_streamlit
 piper
 openai-whisper
+  

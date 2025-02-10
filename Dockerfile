@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy the files
 COPY requirements.txt ./
-COPY app.py ./
+COPY app_transf.py ./
 
 #install the dependecies
 RUN pip install --upgrade pip
